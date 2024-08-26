@@ -6,11 +6,11 @@
 
     <groupId>com.trophonix</groupId>
     <artifactId>TradePlus</artifactId>
-    <version>3.85</version>
+    <version>3.85.1</version>
 
     <properties>
         <res>${project.basedir}/res/</res>
-        <revision>3.85</revision>
+        <revision>3.85.1</revision>
     </properties>
 
     <repositories>
@@ -97,8 +97,7 @@
         <dependency>
             <groupId>co.aikar</groupId>
             <artifactId>taskchain-bukkit</artifactId>
-            <version>3.7.2</version>
-            <scope>compile</scope>
+            <version>3.7.2</version> <!-- Replace with the latest version -->
         </dependency>
 
         <dependency>
