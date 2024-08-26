@@ -22,7 +22,6 @@ public class TradePlusCommand implements CommandExecutor, TabCompleter {
   private List<String> arg0 = Arrays.asList("reload", "rl", "force", "spectate");
 
   public TradePlusCommand(TradePlus pl) {
-//    super(Collections.singletonList("tradeplus"));
     this.pl = pl;
   }
 
@@ -66,8 +65,8 @@ public class TradePlusCommand implements CommandExecutor, TabCompleter {
             return true;
           }
           pl.getTradeConfig()
-              .getAdminForcedTrade()
-              .send(sender, "%PLAYER1%", p1.getName(), "%PLAYER2%", p2.getName());
+                  .getAdminForcedTrade()
+                  .send(sender, "%PLAYER1%", p1.getName(), "%PLAYER2%", p2.getName());
           pl.getTradeConfig().getForcedTrade().send(p1, "%PLAYER%", p2.getName());
           pl.getTradeConfig().getForcedTrade().send(p2, "%PLAYER%", p1.getName());
           Trade trade = new Trade(p1, p2);
@@ -97,13 +96,13 @@ public class TradePlusCommand implements CommandExecutor, TabCompleter {
         break;
     }
     MsgUtils.send(
-        sender,
-        new String[] {
-          "&6&l<----- Trade+ by Trophonix ----->",
-          "&e/trade <player> &fSend a trade request",
-          "&e/tradeplus reload &fReload config files",
-          "&e/tradeplus force <player1> <player2> &fForce 2 players to trade"
-        });
+            sender,
+            new String[] {
+                    "&6&l<----- Trade+ by Trophonix ----->",
+                    "&e/trade <player> &fSend a trade request",
+                    "&e/tradeplus reload &fReload config files",
+                    "&e/tradeplus force <player1> <player2> &fForce 2 players to trade"
+            });
     if (pl.getTradeConfig().isSpectateEnabled())
       MsgUtils.send(sender, "&e/tradeplus spectate <player(s)> &fSpectate an ongoing trade");
     return true;
@@ -120,19 +119,19 @@ public class TradePlusCommand implements CommandExecutor, TabCompleter {
       return arg0;
     } else if (args.length == 1 && !full.endsWith(" ")) {
       return arg0.stream()
-          .filter(name -> !name.equalsIgnoreCase(args[0]) && name.startsWith(args[0].toLowerCase()))
-          .collect(Collectors.toList());
+              .filter(name -> !name.equalsIgnoreCase(args[0]) && name.startsWith(args[0].toLowerCase()))
+              .collect(Collectors.toList());
     } else if (args.length > 1
-        && !full.endsWith(" ")
-        && (args[0].equalsIgnoreCase("force") || args[0].equalsIgnoreCase("spectate"))) {
+            && !full.endsWith(" ")
+            && (args[0].equalsIgnoreCase("force") || args[0].equalsIgnoreCase("spectate"))) {
       return Bukkit.getOnlinePlayers().stream()
-          .filter(p -> !PlayerUtil.isVanished(p))
-          .map(Player::getName)
-          .filter(
-              name ->
-                  !name.equalsIgnoreCase(args[args.length - 1])
-                      && name.toLowerCase().startsWith(args[args.length - 1]))
-          .collect(Collectors.toList());
+              .filter(p -> !PlayerUtil.isVanished(p))
+              .map(Player::getName)
+              .filter(
+                      name ->
+                              !name.equalsIgnoreCase(args[args.length - 1])
+                                      && name.toLowerCase().startsWith(args[args.length - 1]))
+              .collect(Collectors.toList());
     }
     return null;
   }

@@ -15,10 +15,14 @@ public class Sounds {
   private static Sound villagerHmm;
 
   static {
-    String[] split =
-        Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3].split("_");
-    version = Integer.parseInt(split[0].replace("v", "") + split[1]);
-//    System.out.println("You appear to be running version " + version);
+    int tempVersion = 0;
+    try {
+      String[] split = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3].split("_");
+      tempVersion = Integer.parseInt(split[0].replace("v", "") + split[1]);
+    } catch (ArrayIndexOutOfBoundsException | NumberFormatException e) {
+      Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_RED + "Unable to determine server version! Defaulting to version 0.");
+    }
+    version = tempVersion;
   }
 
   public static void loadSounds() {
@@ -44,8 +48,8 @@ public class Sounds {
       }
     } catch (IllegalArgumentException | NullPointerException | NoSuchFieldError ex) {
       Bukkit.getConsoleSender()
-          .sendMessage(
-              ChatColor.DARK_RED + "Unable to load sounds! Sound effects will be disabled.");
+              .sendMessage(
+                      ChatColor.DARK_RED + "Unable to load sounds! Sound effects will be disabled.");
     }
   }
 
@@ -65,5 +69,7 @@ public class Sounds {
     if (villagerHit != null) player.playSound(player.getEyeLocation(), villagerHit, 1, v1);
   }
 
-  public static void villagerHmm(Player player, float v1) {}
+  public static void villagerHmm(Player player, float v1) {
+    if (villagerHmm != null) player.playSound(player.getEyeLocation(), villagerHmm, 1, v1);
+  }
 }

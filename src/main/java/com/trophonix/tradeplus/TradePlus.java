@@ -1,8 +1,5 @@
 package com.trophonix.tradeplus;
 
-import co.aikar.taskchain.BukkitTaskChainFactory;
-import co.aikar.taskchain.TaskChainFactory;
-import com.trophonix.tradeplus.commands.CommandHandler;
 import com.trophonix.tradeplus.commands.TradeCommand;
 import com.trophonix.tradeplus.commands.TradePlusCommand;
 import com.trophonix.tradeplus.config.TradePlusConfig;
@@ -32,14 +29,9 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class TradePlus extends JavaPlugin implements Listener {
 
   public ConcurrentLinkedQueue<Trade> ongoingTrades = new ConcurrentLinkedQueue<>();
-  @Getter private TaskChainFactory taskFactory;
 
   @Getter private TradePlusConfig tradeConfig;
-
-//  private CommandHandler commandHandler;
-
   @Getter private List<Inventory> excessChests;
-
   private Logs logs;
 
   public Trade getTrade(Player player) {
@@ -62,30 +54,36 @@ public class TradePlus extends JavaPlugin implements Listener {
     try {
       WorldGuardHook.init();
     } catch (Throwable ignored) {
-      getLogger().info("Failed to hook into worldguard. Ignore this if you don't have worldguard.");
+      getLogger().info("Failed to hook into WorldGuard. Ignore this if you don't have WorldGuard.");
     }
   }
 
   @Override
   public void onEnable() {
     tradeConfig = new TradePlusConfig(this);
-    taskFactory = BukkitTaskChainFactory.create(this);
-    taskFactory
-        .newChain()
-        .async(tradeConfig::load)
-        .async(tradeConfig::update)
-        .async(tradeConfig::save)
-        .sync(
-            () -> {
-              excessChests = new ArrayList<>();
-              setupCommands();
-              reload();
-              if (Sounds.version > 17) {
-                getServer().getPluginManager().registerEvents(new InteractListener(this), this);
-              }
-              new ExcessChestListener(this);
-            })
-        .execute();
+
+    new BukkitRunnable() {
+      @Override
+      public void run() {
+        tradeConfig.load();
+        tradeConfig.update();
+        tradeConfig.save();
+
+        new BukkitRunnable() {
+          @Override
+          public void run() {
+            excessChests = new ArrayList<>();
+            setupCommands();
+            reload();
+            if (Sounds.version > 17) {
+              getServer().getPluginManager().registerEvents(new InteractListener(TradePlus.this), TradePlus.this);
+            }
+            new ExcessChestListener(TradePlus.this);
+          }
+        }.runTask(TradePlus.this);
+      }
+    }.runTaskAsynchronously(this);
+
     getServer().getPluginManager().registerEvents(this, this);
   }
 
